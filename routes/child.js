@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const passport = require('passport')
 const ChildModel = require('../models/child')
 const multer = require('multer');
 const MIME_TYPE_MAP = {
@@ -22,7 +23,7 @@ var storage = multer.diskStorage({
 })
 var upload = multer({ storage: storage })
 
-router.post('/add', upload.single('image'), async (req, res, next) => {
+router.post('/add', passport.authenticate('jwt',{session:true}),upload.single('image'), async (req, res, next) => {
     try {
         const { name, sex, dob, fathername, mothername, state, district } = req.body;
         if (req.file == undefined) {
@@ -48,7 +49,7 @@ router.post('/add', upload.single('image'), async (req, res, next) => {
     }
 })
 
-router.get('/getall', async (req, res, next) => {
+router.get('/getall',passport.authenticate('jwt',{session:true}), async (req, res, next) => {
     try {
         const details = await ChildModel.find({}, { imagePath: 0 })
         return res.status(200).json({ 'message': details })
@@ -57,7 +58,7 @@ router.get('/getall', async (req, res, next) => {
     }
 })
 
-router.post('/getspecific', async (req, res, next) => {
+router.post('/getspecific', passport.authenticate('jwt',{session:true}),async (req, res, next) => {
     try {
         const details = await ChildModel.find({ 'name': req.body.name });
         return res.status(200).json({ 'message': details })

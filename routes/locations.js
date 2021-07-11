@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const LocationModel = require('../models/location')
-router.post('/state', async (req, res, next) => {
+const passport = require('passport')
+router.post('/state',passport.authenticate('jwt',{session:true}) ,async (req, res, next) => {
     try {
         const { state } = req.body
         let x = await LocationModel.find({ 'state': state });
@@ -17,7 +18,7 @@ router.post('/state', async (req, res, next) => {
         return res.status(503).json({ 'message': error })
     }
 })
-router.get('/state', async (req, res, next) => {
+router.get('/state', passport.authenticate('jwt',{session:true}) ,async (req, res, next) => {
     try {
         const states = await LocationModel.find();
         return res.status(200).json({ 'message': states })
@@ -26,7 +27,7 @@ router.get('/state', async (req, res, next) => {
     }
 })
 
-router.post('/district', async (req, res, next) => {
+router.post('/district', passport.authenticate('jwt',{session:true}) ,async (req, res, next) => {
     try {
         const { state, district } = req.body;
         let x = await LocationModel({ state: state, districts: district });
@@ -40,7 +41,7 @@ router.post('/district', async (req, res, next) => {
     }
 })
 
-router.get('/district', async (req, res, next) => {
+router.get('/district', passport.authenticate('jwt',{session:true}) ,async (req, res, next) => {
     try {
         const locationdata = await LocationModel.find();
         return res.status(200).json({ 'message': locationdata })
